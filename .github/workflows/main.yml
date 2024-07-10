@@ -10,7 +10,7 @@ on:
 
 env:
   ECR_REPOSITORY: nodeimage
-  IMAGE_TAG: $GITHUB_SHA
+  IMAGE_TAG: ${{ github.sha }}
   DOCKERFILE_DIR: Node
   REGION: us-east-1
 
