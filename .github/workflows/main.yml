@@ -32,7 +32,7 @@ jobs:
 
       - name: Create ECR Repo
         id: ecr-create
-        run: aws ecr create-repository --repository-name=${{env.REGION}} --region=${{env.REGION}}
+        run: aws ecr create-repository --repository-name=${{env.ECR_REPOSITORY}} --region=${{env.REGION}}
 
       - name: Login to Amazon ECR
         id: login-ecr
