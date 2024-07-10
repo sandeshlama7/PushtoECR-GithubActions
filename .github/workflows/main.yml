@@ -4,9 +4,16 @@ run-name: ${{ github.actor }} is pushing image to ECR
 
 on:
   push:
-    branches: ["INTERN-791"]
+    branches: ["INTERN-791", "main"]
   pull_request:
     branches: ["main"]
+
+env:
+  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  ECR_REPOSITORY: nodeimage
+  IMAGE_TAG: latest
+  DOCKERFILE_DIR: Node
+  REGION: us-east-1
 
 jobs:
   ECRpush:
@@ -22,11 +29,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: us-east-1
+          aws-region: ${{env.REGION}}
 
       - name: Create ECR Repo
         id: ecr-create
-        run: aws ecr create-repository --repository-name=nodeimage --region=us-east-1
+        run: aws ecr create-repository --repository-name=${{env.REGION}} --region=${{env.REGION}}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -34,11 +41,6 @@ jobs:
 
       - name: Build, Tag, and Push the Image to Amazon ECR
         id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: nodeimage
-          IMAGE_TAG: latest
-          DOCKERFILE_DIR: Node
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
